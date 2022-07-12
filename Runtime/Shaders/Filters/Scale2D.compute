@@ -1,0 +1,19 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Scale2D
+
+// Scales input textre to the size of result texture without interpolatoin
+RWTexture2D<float4> Result;
+RWTexture2D<float4> Input;
+
+[numthreads(8,8,1)]
+void Scale2D (uint3 id : SV_DispatchThreadID)
+{
+    uint2 isize;
+    Input.GetDimensions(isize.x, isize.y);
+    uint2 rsize;
+    Result.GetDimensions(rsize.x, rsize.y);
+    uint2 pos;
+    pos.x = float(isize.x) / float(rsize.x) * float(id.x);
+    pos.y = float(isize.y) / float(rsize.y) * float(id.y);
+    Result[id.xy] = Input[pos];
+}

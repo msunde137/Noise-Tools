@@ -1,0 +1,12 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Filter2D
+
+// Multiply input with result
+RWTexture2D<float4> Input;
+RWTexture2D<float4> Result;
+
+[numthreads(8,8,1)]
+void Filter2D (uint3 id : SV_DispatchThreadID)
+{
+    Result[id.xy] = Input[id.xy] * Result[id.xy];
+}

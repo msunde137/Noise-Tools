@@ -1,0 +1,14 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Filter2D
+
+// Blend input with result using alpha
+RWTexture2D<float4> Input;
+RWTexture2D<float4> Result;
+
+[numthreads(8,8,1)]
+void Filter2D (uint3 id : SV_DispatchThreadID)
+{
+    // TODO: insert actual code here!
+    float weight = Input[id.xy].w;
+    Result[id.xy] = float4(weight * Input[id.xy].xyz + (1 - weight) * Result[id.xy].xyz, 1);
+}

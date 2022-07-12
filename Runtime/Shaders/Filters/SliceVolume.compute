@@ -1,0 +1,47 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Slicer
+
+// Get a 2D layer of a 3D volume
+RWTexture3D<float4> Volume;
+RWTexture2D<float4> Result;
+
+int axis;   // axis of volume
+int layer;  // slice along axis
+
+[numthreads(8,8,1)]
+void Slicer (uint3 id : SV_DispatchThreadID)
+{
+    uint3 vsize;
+    Volume.GetDimensions(vsize.x, vsize.y, vsize.z);
+    uint2 rsize;
+    Result.GetDimensions(rsize.x, rsize.y);
+
+    // determine the correct axis
+    uint3 pos;
+    if (axis == 0)
+    {
+        // scale the other axes to fit the result texture
+        pos.x = int(float(vsize.x) / float(rsize.x) * float(id.x));
+        pos.y = int(float(vsize.y) / float(rsize.y) * float(id.y));
+        pos.z = layer;
+    }
+    else if (axis == 1)
+    {
+        pos.x = int(float(vsize.x) / float(rsize.x) * float(id.x));
+        pos.y = layer;
+        pos.z = int(float(vsize.z) / float(rsize.y) * float(id.y));
+    }
+    else if (axis == 2)
+    {
+        pos.x = layer;
+        pos.y = int(float(vsize.y) / float(rsize.x) * float(id.x));
+        pos.z = int(float(vsize.z) / float(rsize.y) * float(id.y));
+    }
+    else
+    {
+        pos.x = int(float(vsize.x) / float(rsize.x) * float(id.x));
+        pos.y = int(float(vsize.y) / float(rsize.y) * float(id.y));
+        pos.z = 0;
+    }
+    Result[id.xy] = Volume[pos];
+}
