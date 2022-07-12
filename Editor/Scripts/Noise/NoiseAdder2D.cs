@@ -3,74 +3,76 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-/// <summary>
-/// Opperates on a list of noises
-/// </summary>
-[CreateAssetMenu(fileName = "New 2D Noise Adder", menuName = "Noise/2D Noise Adder")]
-public class NoiseAdder2D : Noise2D
-{
-    [SerializeField] public List<Noise2D> noises; // list of noises to add
-
-    public override void CreateShader()
+namespace cosmicpotato.noise-tools.Editor {
+    /// <summary>
+    /// Opperates on a list of noises
+    /// </summary>
+    [CreateAssetMenu(fileName = "New 2D Noise Adder", menuName = "Noise/2D Noise Adder")]
+    public class NoiseAdder2D : Noise2D
     {
-        base.CreateShader();
-        if (noiseShader)
-        {
-            if (noiseShader.HasKernel("Add2D"))
-                shaderHandle = noiseShader.FindKernel("Add2D");
-            else if (noiseShader.HasKernel("Multiply2D"))
-                shaderHandle = noiseShader.FindKernel("Multiply2D");
-            else if (noiseShader.HasKernel("WeightedBlend2D"))
-                shaderHandle = noiseShader.FindKernel("WeightedBlend2D");
-            else if (noiseShader.HasKernel("Filter2D"))
-                shaderHandle = noiseShader.FindKernel("Filter2D");
-            else
-                Debug.LogWarning("Filter not recognized");
-        }
-    }
+        [SerializeField] public List<Noise2D> noises; // list of noises to add
 
-    public override RenderTexture CalculateNoise(Vector2 offset, Vector2 scale, int resolution)
-    {
-        // init render texture
-        RenderTexture result = new RenderTexture(resolution, resolution, 0, RenderTextureFormat.ARGB32);
-        result.enableRandomWrite = true;
-        result.Create();
-
-        if (noiseShader && noises.Count > 0)
+        public override void CreateShader()
         {
-            // iterate through all noises
-            for (int i = 0;  i < noises.Count; i++)
+            base.CreateShader();
+            if (noiseShader)
             {
-                if (!noises[i]) continue;
-                if (noises[i] == this)
-                {
-                    noises.Remove(noises[i]);
-                    Debug.Log("Cannot add this noise adder to itself");
-                    i--;
-                    continue;
-                }
-                noises[i].resolution = resolution;
-                RenderTexture rt = noises[i].CalculateNoise(noises[i].offset + offset / noises[i].scale, noises[i].scale * scale, resolution);
-                result = AddNoise(rt, result, resolution);
+                if (noiseShader.HasKernel("Add2D"))
+                    shaderHandle = noiseShader.FindKernel("Add2D");
+                else if (noiseShader.HasKernel("Multiply2D"))
+                    shaderHandle = noiseShader.FindKernel("Multiply2D");
+                else if (noiseShader.HasKernel("WeightedBlend2D"))
+                    shaderHandle = noiseShader.FindKernel("WeightedBlend2D");
+                else if (noiseShader.HasKernel("Filter2D"))
+                    shaderHandle = noiseShader.FindKernel("Filter2D");
+                else
+                    Debug.LogWarning("Filter not recognized");
             }
         }
 
-        return result;
-    }
+        public override RenderTexture CalculateNoise(Vector2 offset, Vector2 scale, int resolution)
+        {
+            // init render texture
+            RenderTexture result = new RenderTexture(resolution, resolution, 0, RenderTextureFormat.ARGB32);
+            result.enableRandomWrite = true;
+            result.Create();
 
-    /// <summary>
-    /// Noise operator function
-    /// </summary>
-    /// <param name="input"></param>
-    /// <param name="result"></param>
-    /// <param name="resolution"></param>
-    private RenderTexture AddNoise(RenderTexture input, RenderTexture result, int resolution)
-    {
-        noiseShader.SetTexture(shaderHandle, "Input", input);
-        noiseShader.SetTexture(shaderHandle, "Result", result);
-        uint kx, ky, kz;
-        noiseShader.GetKernelThreadGroupSizes(shaderHandle, out kx, out ky, out kz);
-        noiseShader.Dispatch(shaderHandle, (int)(resolution / kx) + 1, (int)(resolution / ky) + 1, 1);
-        return result;
+            if (noiseShader && noises.Count > 0)
+            {
+                // iterate through all noises
+                for (int i = 0;  i < noises.Count; i++)
+                {
+                    if (!noises[i]) continue;
+                    if (noises[i] == this)
+                    {
+                        noises.Remove(noises[i]);
+                        Debug.Log("Cannot add this noise adder to itself");
+                        i--;
+                        continue;
+                    }
+                    noises[i].resolution = resolution;
+                    RenderTexture rt = noises[i].CalculateNoise(noises[i].offset + offset / noises[i].scale, noises[i].scale * scale, resolution);
+                    result = AddNoise(rt, result, resolution);
+                }
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Noise operator function
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="result"></param>
+        /// <param name="resolution"></param>
+        private RenderTexture AddNoise(RenderTexture input, RenderTexture result, int resolution)
+        {
+            noiseShader.SetTexture(shaderHandle, "Input", input);
+            noiseShader.SetTexture(shaderHandle, "Result", result);
+            uint kx, ky, kz;
+            noiseShader.GetKernelThreadGroupSizes(shaderHandle, out kx, out ky, out kz);
+            noiseShader.Dispatch(shaderHandle, (int)(resolution / kx) + 1, (int)(resolution / ky) + 1, 1);
+            return result;
+        }
     }
 }
