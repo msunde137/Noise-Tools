@@ -21,13 +21,6 @@ namespace cosmicpotato.noisetools.Editor {
         [HideInInspector] public int previewRes = 150;      // preview resolution
         [HideInInspector] public bool showPreview;          // show preview dropdown
 
-        private void OnEnable()
-        {
-            CreatePreviewRT();
-            CreateShader();
-            CalculatePreview();
-        }
-
         private void OnValidate()
         {
             resolution = (int)Mathf.Clamp(resolution, 1, Mathf.Infinity);
@@ -60,6 +53,5 @@ namespace cosmicpotato.noisetools.Editor {
         /// Save noise texture to png
         /// </summary>
         public abstract void SaveTexture();
-
     }
 }

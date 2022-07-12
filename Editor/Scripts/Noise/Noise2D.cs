@@ -36,6 +36,10 @@ namespace cosmicpotato.noisetools.Editor {
 
             if (previewShader && previewShader.HasKernel("Scale2D"))
                 previewHandle = previewShader.FindKernel("Scale2D");
+            else if (!previewShader)
+                Debug.LogError("Preview shader not found");
+            else
+                Debug.LogError("Invalid kernel for preview shader");
         }
 
         /// <summary>
@@ -83,15 +87,16 @@ namespace cosmicpotato.noisetools.Editor {
             {
                 CreatePreviewRT();
             }
-
-            if (previewShader && previewShader.HasKernel("Scale2D"))
+            if (!previewShader)
             {
-                previewShader.SetTexture(previewHandle, "Input", CalculateNoise());
-                previewShader.SetTexture(previewHandle, "Result", previewRT);
-                uint kx = 0, ky = 0, kz = 0;
-                noiseShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
-                previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, 1);
+                CreateShader();
             }
+
+            previewShader.SetTexture(previewHandle, "Input", CalculateNoise());
+            previewShader.SetTexture(previewHandle, "Result", previewRT);
+            uint kx = 0, ky = 0, kz = 0;
+            previewShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
+            previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, 1);
         }
 
     }

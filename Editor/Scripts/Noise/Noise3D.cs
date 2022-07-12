@@ -39,6 +39,10 @@ namespace cosmicpotato.noisetools.Editor {
 
             if (previewShader && previewShader.HasKernel("Slicer"))
                 previewHandle = previewShader.FindKernel("Slicer");
+            else if (!previewShader)
+                Debug.LogError("Preview shader not found");
+            else
+                Debug.LogError("Invalid kernel for preview shader");
         }
 
         /// <summary> 
@@ -68,23 +72,26 @@ namespace cosmicpotato.noisetools.Editor {
 
         public override void CalculatePreview()
         {
+            // init preview
             if (!previewRT)
             {
                 CreatePreviewRT();
             }
-            if (previewHandle != -1)
+            if (!previewShader)
             {
-                // set shader vals
-                previewShader.SetTexture(previewHandle, "Volume", CalculateNoise());
-                previewShader.SetTexture(previewHandle, "Result", previewRT);
-                previewShader.SetInt("axis", axis);
-                previewShader.SetInt("layer", layer-1);
-
-                // get threadgroups
-                uint kx = 0, ky = 0, kz = 0;
-                previewShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
-                previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, (int)(previewRes / kz) + 1);
+                CreateShader();
             }
+
+            // set shader vals
+            previewShader.SetTexture(previewHandle, "Volume", CalculateNoise());
+            previewShader.SetTexture(previewHandle, "Result", previewRT);
+            previewShader.SetInt("axis", axis);
+            previewShader.SetInt("layer", layer-1);
+
+            // get threadgroups
+            uint kx = 0, ky = 0, kz = 0;
+            previewShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
+            previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, (int)(previewRes / kz) + 1);
         }
 
         /// <summary>
