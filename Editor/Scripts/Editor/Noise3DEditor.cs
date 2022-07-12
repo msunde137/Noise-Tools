@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace cosmicpotato.noise-tools.Editor {
+namespace cosmicpotato.noisetools.Editor {
     [CustomEditor(typeof(Noise3D), true)]
     [CanEditMultipleObjects]
     public class Noise3DEditor : NoiseEditor

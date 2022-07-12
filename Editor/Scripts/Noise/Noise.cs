@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace cosmicpotato.noise-tools.Editor {
+namespace cosmicpotato.noisetools.Editor {
     /// <summary>
     /// Base class for the noise system
     /// </summary>

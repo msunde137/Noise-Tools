@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace cosmicpotato.noise-tools.Editor {
+namespace cosmicpotato.noisetools.Editor {
     [CreateAssetMenu(fileName = "New 3D Perlin Noise", menuName = "Noise/3D Perlin Noise")]
     public class PerlinNoise3D : Noise3D
     {

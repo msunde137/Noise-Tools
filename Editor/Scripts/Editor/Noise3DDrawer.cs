@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace cosmicpotato.noise-tools.Editor {
+namespace cosmicpotato.noisetools.Editor {
     [CustomPropertyDrawer(typeof(Noise3D), true)]
     public class Noise3DDrawer : NoiseDrawer
     {

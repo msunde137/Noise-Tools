@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace cosmicpotato.noise-tools.Editor {
+namespace cosmicpotato.noisetools.Editor {
     [CustomEditor(typeof(Noise), true)]
     [CanEditMultipleObjects]
     public class NoiseEditor : Editor

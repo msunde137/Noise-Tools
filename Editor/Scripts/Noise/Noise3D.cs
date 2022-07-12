@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.IO;
 
-namespace cosmicpotato.noise-tools.Editor {
+namespace cosmicpotato.noisetools.Editor {
     /// <summary>
     /// 3D noise base class
     /// </summary>
