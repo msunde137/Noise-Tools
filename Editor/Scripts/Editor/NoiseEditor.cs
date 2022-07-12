@@ -6,7 +6,7 @@ using UnityEngine;
 namespace cosmicpotato.noisetools.Editor {
     [CustomEditor(typeof(Noise), true)]
     [CanEditMultipleObjects]
-    public class NoiseEditor : Editor
+    public class NoiseEditor : UnityEditor.Editor
     {
         protected Noise noise;
         bool showPreview;
