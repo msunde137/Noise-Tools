@@ -1,12 +1,26 @@
 {
-    "name": "com.cosmicpotato.noisetools",
-    "version": "1.1.1",
-    "displayName": "Noise Tools",
-    "description": "A unity package for manipulating noise textures.",
-    "unity": "2021.3",
-    "author": {
-      "name": "Mac Sunde",
-      "email": "",
-      "url": ""
+  "name": "com.cosmicpotato.noisetools",
+  "version": "1.1.2",
+  "displayName": "Noise Tools",
+  "description": "A unity package for manipulating noise textures.",
+  "unity": "2021.3",
+  "documentationUrl": "https://github.com/msunde137/noise-tools/blob/master/README.md",
+  "licensesUrl": "https://github.com/msunde137/noise-tools/blob/master/LICENSE",
+  "author": {
+    "name": "Mac Sunde",
+    "email": "",
+    "url": "https://github.com/msunde137/noise-tools"
+  },
+  "samples": [
+    {
+        "displayName": "Example Noise Assets",
+        "description": "Contains sample noise assets",
+        "path": "Samples~/Configs"
+    },
+    {
+        "displayName": "Example Generated Textures",
+        "description": "Contains sample textures generated from noise assets",
+        "path": "Samples~/Textures"
     }
-  }
+  ]
+}
