@@ -12,24 +12,6 @@ namespace cosmicpotato.noisetools.Editor {
     {
         [SerializeField] public List<Noise2D> noises; // list of noises to add
 
-        public override void CreateShader()
-        {
-            base.CreateShader();
-            if (noiseShader)
-            {
-                if (noiseShader.HasKernel("Add2D"))
-                    shaderHandle = noiseShader.FindKernel("Add2D");
-                else if (noiseShader.HasKernel("Multiply2D"))
-                    shaderHandle = noiseShader.FindKernel("Multiply2D");
-                else if (noiseShader.HasKernel("WeightedBlend2D"))
-                    shaderHandle = noiseShader.FindKernel("WeightedBlend2D");
-                else if (noiseShader.HasKernel("Filter2D"))
-                    shaderHandle = noiseShader.FindKernel("Filter2D");
-                else
-                    Debug.LogWarning("Filter not recognized");
-            }
-        }
-
         public override RenderTexture CalculateNoise(Vector2 offset, Vector2 scale, int resolution)
         {
             // init render texture
@@ -37,8 +19,10 @@ namespace cosmicpotato.noisetools.Editor {
             result.enableRandomWrite = true;
             result.Create();
 
-            if (noiseShader && noises.Count > 0)
+            if (noiseShader && noiseShader.HasKernel("Filter2D") && noises.Count > 0)
             {
+                shaderHandle = noiseShader.FindKernel("Filter2D");
+
                 // iterate through all noises
                 for (int i = 0;  i < noises.Count; i++)
                 {

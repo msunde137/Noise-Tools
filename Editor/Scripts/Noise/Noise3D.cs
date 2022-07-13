@@ -23,19 +23,10 @@ namespace cosmicpotato.noisetools.Editor {
             return CalculateNoise(offset, scale, resolution);
         }
         
-        public override void CreateShader()
+        public override void GetPreviewShader()
         {
             // search all assets for the right shader
-            string shaderName = "SliceVolume";
-            ComputeShader[] compShaders = (ComputeShader[])Resources.FindObjectsOfTypeAll(typeof(ComputeShader));
-            for (int i = 0; i < compShaders.Length; i++)
-            {
-                if (compShaders[i].name == shaderName)
-                {
-                    previewShader = compShaders[i];
-                    break;
-                }
-            }
+            previewShader = Resources.Load<ComputeShader>("Shaders/Filters/SliceVolume");
 
             if (previewShader && previewShader.HasKernel("Slicer"))
                 previewHandle = previewShader.FindKernel("Slicer");
@@ -79,7 +70,7 @@ namespace cosmicpotato.noisetools.Editor {
             }
             if (!previewShader)
             {
-                CreateShader();
+                GetPreviewShader();
             }
 
             // set shader vals
@@ -93,38 +84,5 @@ namespace cosmicpotato.noisetools.Editor {
             previewShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
             previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, (int)(previewRes / kz) + 1);
         }
-
-        /// <summary>
-        /// Get a layer of 3D nosise 
-        /// </summary>
-        /// <param name="axis"></param>
-        /// <param name="layer"></param>
-        /// <returns>Noise render texture</returns>
-        public RenderTexture Slice(int axis, int layer)
-        {
-            // create render texture
-            RenderTexture result = new RenderTexture(resolution, resolution, 0, RenderTextureFormat.ARGB32);
-            result.enableRandomWrite = true;
-            result.Create();
-
-            if (previewShader && previewShader.HasKernel("Slicer"))
-            {
-                // set shader vals
-                previewShader.SetTexture(previewHandle, "Volume", CalculateNoise());
-                previewShader.SetTexture(previewHandle, "Result", result);
-                axis = Mathf.Clamp(axis, 0, 2);
-                previewShader.SetInt("axis", axis);
-                layer = Mathf.Clamp(layer, 0, resolution - 1);
-                previewShader.SetInt("layer", layer);
-
-                // get threadgroups
-                uint kx = 0, ky = 0, kz = 0;
-                noiseShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
-                noiseShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, (int)(previewRes / kz) + 1);
-            }
-
-            return result;
-        }
-
     }
 }

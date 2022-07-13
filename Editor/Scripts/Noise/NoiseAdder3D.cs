@@ -11,9 +11,9 @@ namespace cosmicpotato.noisetools.Editor {
     {
         [SerializeField] public List<Noise3D> noises; // list of noises to add
 
-        public override void CreateShader()
+        public override void GetPreviewShader()
         {
-            base.CreateShader();
+            base.GetPreviewShader();
             if (noiseShader)
             {
                 if (noiseShader.HasKernel("Filter3D"))
@@ -32,8 +32,10 @@ namespace cosmicpotato.noisetools.Editor {
             result.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
             result.Create();
 
-            if (noiseShader && noises.Count > 0)
+            if (noiseShader && noiseShader.HasKernel("Filter3D") && noises.Count > 0)
             {
+                shaderHandle = noiseShader.FindKernel("Filter3D");
+
                 // iterate through all noises
                 for (int i = 0; i < noises.Count; i++)
                 {

@@ -6,12 +6,12 @@ namespace cosmicpotato.noisetools.Editor {
     [CreateAssetMenu(fileName = "New 3D Perlin Noise", menuName = "Noise/3D Perlin Noise")]
     public class PerlinNoise3D : Noise3D
     {
-        public uint seed;       // seed for random function
-        public float weight;    // weight of noise
+        public uint seed = 10;      // seed for random function
+        public float weight = 1;    // weight of noise
         [Range(0f, 1f)]
-        public float alpha;     // alpha of noise
+        public float alpha = 1;     // alpha of noise
 
-        ComputeBuffer permBuffer; // random permutation buffer
+        ComputeBuffer permBuffer;   // random permutation buffer
         // random permutation list
         uint[] perm = { 151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194,
             233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6,
@@ -46,13 +46,6 @@ namespace cosmicpotato.noisetools.Editor {
             24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
         };
 
-        public override void CreateShader()
-        {
-            base.CreateShader();
-            if (noiseShader && noiseShader.HasKernel("Noise3D"))
-                shaderHandle = noiseShader.FindKernel("Noise3D");
-        }
-
         public override RenderTexture CalculateNoise(Vector3 offset, Vector3 scale, int resolution)
         {
             // get 3D render texture
@@ -67,6 +60,7 @@ namespace cosmicpotato.noisetools.Editor {
 
             if (noiseShader && noiseShader.HasKernel("Noise3D"))
             {
+                shaderHandle = noiseShader.FindKernel("Noise3D");
                 scale = scale * (float)resolution; // keep scale of noise constant with changing resolution
                 noiseShader.SetTexture(shaderHandle, "Result", result);
                 noiseShader.SetBuffer(shaderHandle, "perm", permBuffer);
@@ -80,7 +74,7 @@ namespace cosmicpotato.noisetools.Editor {
                 noiseShader.GetKernelThreadGroupSizes(shaderHandle, out kx, out ky, out kz);
                 noiseShader.Dispatch(shaderHandle, (int)(resolution / kx) + 1, (int)(resolution / ky) + 1, (int)(resolution / kz) + 1);
             }
-
+            permBuffer.Release();
 
             return result;
         }

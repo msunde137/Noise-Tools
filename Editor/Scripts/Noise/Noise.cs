@@ -10,7 +10,6 @@ namespace cosmicpotato.noisetools.Editor {
     {
         public ComputeShader noiseShader;   // noise shader
         public int resolution = 20;         // resolution of texture
-        public bool realtime = false;       // preview in realtime
 
 
         protected ComputeShader previewShader;  // preview shader
@@ -19,7 +18,8 @@ namespace cosmicpotato.noisetools.Editor {
 
         [HideInInspector] public RenderTexture previewRT;   // preview render texture
         [HideInInspector] public int previewRes = 150;      // preview resolution
-        [HideInInspector] public bool showPreview;          // show preview dropdown
+        [HideInInspector] public bool realtime = false;     // preview in realtime
+        [HideInInspector] public bool showPreview = true;   // show preview dropdown
 
         private void OnValidate()
         {
@@ -42,7 +42,7 @@ namespace cosmicpotato.noisetools.Editor {
         /// <summary>
         /// Initialize shaders
         /// </summary>
-        public abstract void CreateShader();
+        public abstract void GetPreviewShader();
         /// <summary>
         /// Convert noise to preview render texture
         /// </summary>

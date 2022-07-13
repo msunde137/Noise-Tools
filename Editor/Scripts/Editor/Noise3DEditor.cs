@@ -20,9 +20,15 @@ namespace cosmicpotato.noisetools.Editor {
         {
             base.OnInspectorGUI();
 
-            //SerializedObject o = new SerializedObject(noise3D.axis);
-            noise3D.axis = EditorGUILayout.IntSlider("Axis", noise3D.axis, 0, 2);
-            noise3D.layer = EditorGUILayout.IntSlider("Layer", noise3D.layer, 1, noise.previewRes);
+            EditorGUI.BeginChangeCheck();
+            if (showPreview)
+            {
+                noise3D.axis = EditorGUILayout.IntSlider("Axis", noise3D.axis, 0, 2);
+                noise3D.layer = EditorGUILayout.IntSlider("Layer", noise3D.layer, 1, noise.resolution);
+            }
+
+            if (EditorGUI.EndChangeCheck())
+                noise3D.CalculatePreview();
         }
     }
 }

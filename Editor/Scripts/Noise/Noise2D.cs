@@ -20,19 +20,10 @@ namespace cosmicpotato.noisetools.Editor {
             return CalculateNoise(offset, scale, resolution);
         }
 
-        public override void CreateShader()
+        public override void GetPreviewShader()
         {
             // look for the correct preview shader in all assets
-            string shaderName = "Scale2D";
-            ComputeShader[] compShaders = (ComputeShader[])Resources.FindObjectsOfTypeAll(typeof(ComputeShader));
-            for (int i = 0; i < compShaders.Length; i++)
-            {
-                if (compShaders[i].name == shaderName)
-                {
-                    previewShader = compShaders[i];
-                    break;
-                }
-            }
+            previewShader = Resources.Load<ComputeShader>("Shaders/Filters/Scale2D");
 
             if (previewShader && previewShader.HasKernel("Scale2D"))
                 previewHandle = previewShader.FindKernel("Scale2D");
@@ -89,7 +80,7 @@ namespace cosmicpotato.noisetools.Editor {
             }
             if (!previewShader)
             {
-                CreateShader();
+                GetPreviewShader();
             }
 
             previewShader.SetTexture(previewHandle, "Input", CalculateNoise());

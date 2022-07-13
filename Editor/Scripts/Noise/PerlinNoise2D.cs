@@ -6,10 +6,10 @@ namespace cosmicpotato.noisetools.Editor {
     [CreateAssetMenu(fileName ="New Perlin Noise", menuName = "Noise/2D Perlin Noise")]
     public class PerlinNoise2D : Noise2D
     {
-        public uint seed;        // seed for random function
-        public float weight;    // weight of noise
+        public uint seed = 10;      // seed for random function
+        public float weight = 1;    // weight of noise
         [Range(0f, 1f)] 
-        public float alpha;     // alpha of noise texture
+        public float alpha = 1;     // alpha of noise texture
 
         ComputeBuffer permBuffer;   // random permutation buffer
         // randof permutation list
@@ -46,13 +46,6 @@ namespace cosmicpotato.noisetools.Editor {
             24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
         };
 
-        public override void CreateShader()
-        {
-            base.CreateShader();
-            if (noiseShader && noiseShader.HasKernel("Noise2D"))
-                shaderHandle = noiseShader.FindKernel("Noise2D");
-        }
-
         public override RenderTexture CalculateNoise(Vector2 offset, Vector2 scale, int resolution)
         {
             // init render texture
@@ -65,6 +58,7 @@ namespace cosmicpotato.noisetools.Editor {
 
             if (noiseShader && noiseShader.HasKernel("Noise2D"))
             {
+                shaderHandle = noiseShader.FindKernel("Noise2D");
                 scale = scale * (float)resolution; // keep scale of noise constant with changing resolution
                 noiseShader.SetTexture(shaderHandle, "Result", result);
                 noiseShader.SetBuffer(shaderHandle, "perm", permBuffer);

@@ -44,7 +44,7 @@ namespace cosmicpotato.noisetools.Editor {
             }
 
             // save button
-            totalHeight += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+            totalHeight += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing * 2;
 
             // realtime editing
             totalHeight += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
@@ -78,7 +78,10 @@ namespace cosmicpotato.noisetools.Editor {
                     EditorGUI.indentLevel++;
 
                     // Draw background
-                    GUI.Box(new Rect(0, position.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing - 1, Screen.width, position.height - EditorGUIUtility.singleLineHeight - EditorGUIUtility.standardVerticalSpacing), "");
+                    GUI.Box(new Rect(position.x, 
+                        position.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing, 
+                        position.width, 
+                        position.height - (EditorGUIUtility.singleLineHeight + 2 * EditorGUIUtility.standardVerticalSpacing)), "");
 
                     // Iterate over all the serialized fields and draw them
                     SerializedProperty prop = serializedObject.GetIterator();
@@ -116,6 +119,7 @@ namespace cosmicpotato.noisetools.Editor {
                     if (GUI.Button(EditorGUI.IndentedRect(new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight)), "Save Texture"))
                         config.SaveTexture();
                     y = NextLine(y);
+                    y += EditorGUIUtility.standardVerticalSpacing;
 
                     // realtime preview
                     config.realtime = EditorGUI.Toggle(new Rect(position.x, y, position.width / 2, EditorGUIUtility.singleLineHeight), "Realtime Editing", config.realtime);
