@@ -15,7 +15,7 @@
     {
         "displayName": "Example Noise Assets",
         "description": "Contains sample noise assets",
-        "path": "Samples~/Configs"
+        "path": "Samples~/Configs/Noise"
     },
     {
         "displayName": "Example Generated Textures",
