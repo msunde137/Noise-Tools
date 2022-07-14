@@ -166,20 +166,6 @@ namespace cosmicpotato.noisetools.Editor {
                         while (prop.NextVisible(false));
                     }
 
-                    y += EditorGUIUtility.standardVerticalSpacing;
-
-                    // realtime preview
-                    config.realtime = EditorGUI.Toggle(new Rect(position.x, y, position.width / 2, EditorGUIUtility.singleLineHeight), "Realtime Editing", config.realtime);
-
-                    // preview calculation
-                    EditorGUI.BeginDisabledGroup(config.realtime);
-                    if (GUI.Button(EditorGUI.IndentedRect(new Rect(position.x + position.width / 2, y, position.width / 2, EditorGUIUtility.singleLineHeight)), "Calculate Noise"))
-                        config.CalculatePreview();
-                    EditorGUI.EndDisabledGroup();
-                    if (config.realtime)
-                        config.CalculatePreview();
-                    y = NextLine(y);
-
                     y = PreviewTextureGUI(position, y, config);
 
                     if (GUI.changed)
@@ -203,6 +189,20 @@ namespace cosmicpotato.noisetools.Editor {
 
             if (config.showPreview)
             {
+                y += EditorGUIUtility.standardVerticalSpacing;
+
+                // realtime preview
+                config.realtime = EditorGUI.Toggle(new Rect(position.x, y, position.width / 2, EditorGUIUtility.singleLineHeight), "Realtime Editing", config.realtime);
+
+                // preview calculation
+                EditorGUI.BeginDisabledGroup(config.realtime);
+                if (GUI.Button(EditorGUI.IndentedRect(new Rect(position.x + position.width / 2, y, position.width / 2, EditorGUIUtility.singleLineHeight)), "Calculate Noise"))
+                    config.CalculatePreview();
+                EditorGUI.EndDisabledGroup();
+                if (config.realtime)
+                    config.CalculatePreview();
+                y = NextLine(y);
+
                 // save texture button
                 if (GUI.Button(EditorGUI.IndentedRect(new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight)), "Save Texture"))
                     config.SaveTexture();
