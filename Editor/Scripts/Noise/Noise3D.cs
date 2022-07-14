@@ -27,13 +27,6 @@ namespace cosmicpotato.noisetools.Editor {
         {
             // search all assets for the right shader
             previewShader = Resources.Load<ComputeShader>("Shaders/Filters/SliceVolume");
-
-            if (previewShader && previewShader.HasKernel("Slicer"))
-                previewHandle = previewShader.FindKernel("Slicer");
-            else if (!previewShader)
-                Debug.LogError("Preview shader not found");
-            else
-                Debug.LogError("Invalid kernel for preview shader");
         }
 
         /// <summary> 
@@ -65,13 +58,16 @@ namespace cosmicpotato.noisetools.Editor {
         {
             // init preview
             if (!previewRT)
-            {
                 CreatePreviewRT();
-            }
             if (!previewShader)
-            {
                 GetPreviewShader();
-            }
+
+            if (previewShader && previewShader.HasKernel("Slicer"))
+                previewHandle = previewShader.FindKernel("Slicer");
+            else if (!previewShader)
+                Debug.LogError("Preview shader not found");
+            else
+                Debug.LogError("Invalid kernel for preview shader");
 
             // set shader vals
             previewShader.SetTexture(previewHandle, "Volume", CalculateNoise());

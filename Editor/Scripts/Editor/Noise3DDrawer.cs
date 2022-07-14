@@ -24,7 +24,6 @@ namespace cosmicpotato.noisetools.Editor {
                 noise3D.axis = EditorGUI.IntSlider(new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight), "Axis", noise3D.axis, 0, 2);
                 y = NextLine(y);
                 noise3D.layer = EditorGUI.IntSlider(new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight), "Layer", noise3D.layer, 1, noise3D.resolution);
-                Debug.Log(noise3D.resolution);
                 y = NextLine(y);
                 EditorGUI.indentLevel--;
             }

@@ -1,12 +1,49 @@
 using UnityEngine;
 using UnityEditor;
 using System;
+using System.Collections.Generic;
 
 namespace cosmicpotato.noisetools.Editor {
+    [CustomPropertyDrawer(typeof(ShaderSelect), true)]
+    [CanEditMultipleObjects]
+    public class ShaderSelectEditor : PropertyDrawer
+    {
+        protected string[] options;
+
+        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+        {
+            //EditorGUI.BeginProperty(position, label, property);
+
+            //var data = (ScriptableObject)property.objectReferenceValue;
+            //var config = (ShaderSelect)property.objectReferenceValue;
+
+
+
+            Noise noise = (Noise)property.FindPropertyRelative("noiseShaders").serializedObject.targetObject;
+            List<ComputeShader> noiseShaders = noise.shaderSelect.noiseShaders;
+
+            if (noiseShaders != null && noiseShaders.Count > 0)
+            {
+                options = new string[noiseShaders.Count];
+                for (int j = 0; j < noiseShaders.Count; j++)
+                {
+                    options[j] = noiseShaders[j].name;
+                }
+
+                if (noise.shaderSelect.shadersIndex >= options.Length)
+                    noise.shaderSelect.shadersIndex = 0;
+            
+                noise.shaderSelect.shadersIndex = EditorGUI.Popup(position, "Shader", noise.shaderSelect.shadersIndex, options);
+                if (noiseShaders.Count > 0)
+                    noise.shaderSelect.noiseShader = noise.shaderSelect.noiseShaders[noise.shaderSelect.shadersIndex];
+            }
+
+        }
+    }
+
     [CustomPropertyDrawer(typeof(Noise), true)]
     public class NoiseDrawer : PropertyDrawer
     {
-
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
             float totalHeight = EditorGUIUtility.singleLineHeight;

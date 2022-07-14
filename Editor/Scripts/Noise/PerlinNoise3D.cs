@@ -46,6 +46,20 @@ namespace cosmicpotato.noisetools.Editor {
             24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
         };
 
+        public override void GetNoiseShaders()
+        {
+            shaderSelect.noiseShaders = new List<ComputeShader>(Resources.LoadAll<ComputeShader>("Shaders/Noise"));
+
+            for (int i = 0; i < shaderSelect.noiseShaders.Count; i++)
+            {
+                if (!shaderSelect.noiseShaders[i].HasKernel("Noise3D"))
+                {
+                    shaderSelect.noiseShaders.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+
         public override RenderTexture CalculateNoise(Vector3 offset, Vector3 scale, int resolution)
         {
             // get 3D render texture
@@ -58,21 +72,27 @@ namespace cosmicpotato.noisetools.Editor {
             permBuffer = new ComputeBuffer(perm.Length, sizeof(uint), ComputeBufferType.Structured);
             permBuffer.SetData(perm);
 
-            if (noiseShader && noiseShader.HasKernel("Noise3D"))
+            if (!shaderSelect.noiseShader)
             {
-                shaderHandle = noiseShader.FindKernel("Noise3D");
+                GetNoiseShaders();
+                shaderSelect.noiseShader = shaderSelect.noiseShaders[0];
+            }
+
+            if (shaderSelect.noiseShader && shaderSelect.noiseShader.HasKernel("Noise3D"))
+            {
+                shaderHandle = shaderSelect.noiseShader.FindKernel("Noise3D");
                 scale = scale * (float)resolution; // keep scale of noise constant with changing resolution
-                noiseShader.SetTexture(shaderHandle, "Result", result);
-                noiseShader.SetBuffer(shaderHandle, "perm", permBuffer);
-                noiseShader.SetFloats("scale", new float[] { scale.x, scale.y, scale.z });
-                noiseShader.SetFloats("offset", new float[] { offset.x, offset.y, offset.z });
-                noiseShader.SetFloat("alpha", alpha);
-                noiseShader.SetFloat("noiseWeight", weight);
-                noiseShader.SetInt("seed", (int)seed);
+                shaderSelect.noiseShader.SetTexture(shaderHandle, "Result", result);
+                shaderSelect.noiseShader.SetBuffer(shaderHandle, "perm", permBuffer);
+                shaderSelect.noiseShader.SetFloats("scale", new float[] { scale.x, scale.y, scale.z });
+                shaderSelect.noiseShader.SetFloats("offset", new float[] { offset.x, offset.y, offset.z });
+                shaderSelect.noiseShader.SetFloat("alpha", alpha);
+                shaderSelect.noiseShader.SetFloat("noiseWeight", weight);
+                shaderSelect.noiseShader.SetInt("seed", (int)seed);
 
                 uint kx = 0, ky = 0, kz = 0;
-                noiseShader.GetKernelThreadGroupSizes(shaderHandle, out kx, out ky, out kz);
-                noiseShader.Dispatch(shaderHandle, (int)(resolution / kx) + 1, (int)(resolution / ky) + 1, (int)(resolution / kz) + 1);
+                shaderSelect.noiseShader.GetKernelThreadGroupSizes(shaderHandle, out kx, out ky, out kz);
+                shaderSelect.noiseShader.Dispatch(shaderHandle, (int)(resolution / kx) + 1, (int)(resolution / ky) + 1, (int)(resolution / kz) + 1);
             }
             permBuffer.Release();
 

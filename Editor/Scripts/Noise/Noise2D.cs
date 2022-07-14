@@ -24,13 +24,6 @@ namespace cosmicpotato.noisetools.Editor {
         {
             // look for the correct preview shader in all assets
             previewShader = Resources.Load<ComputeShader>("Shaders/Filters/Scale2D");
-
-            if (previewShader && previewShader.HasKernel("Scale2D"))
-                previewHandle = previewShader.FindKernel("Scale2D");
-            else if (!previewShader)
-                Debug.LogError("Preview shader not found");
-            else
-                Debug.LogError("Invalid kernel for preview shader");
         }
 
         /// <summary>
@@ -75,14 +68,16 @@ namespace cosmicpotato.noisetools.Editor {
         {
             // init preview
             if (!previewRT)
-            {
                 CreatePreviewRT();
-            }
             if (!previewShader)
-            {
                 GetPreviewShader();
-            }
 
+            if (previewShader && previewShader.HasKernel("Scale2D"))
+                previewHandle = previewShader.FindKernel("Scale2D");
+            else if (!previewShader)
+                Debug.LogError("Preview shader not found");
+            else
+                Debug.LogError("Invalid kernel for preview shader");
             previewShader.SetTexture(previewHandle, "Input", CalculateNoise());
             previewShader.SetTexture(previewHandle, "Result", previewRT);
             uint kx = 0, ky = 0, kz = 0;

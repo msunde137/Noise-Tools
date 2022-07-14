@@ -11,15 +11,27 @@ namespace cosmicpotato.noisetools.Editor {
         protected Noise noise;
         protected bool showPreview;
 
+        SerializedProperty script;
+        SerializedProperty resolution;
+        SerializedProperty offset;
+        SerializedProperty scale;
+
         protected virtual void OnEnable()
         {
             noise = target as Noise;
+
+            script = serializedObject.FindProperty("Script");
+            resolution = serializedObject.FindProperty("resolution");
+            offset = serializedObject.FindProperty("offset");
+            scale = serializedObject.FindProperty("scale");
         }
+
         public override void OnInspectorGUI()
         {
             EditorGUI.BeginChangeCheck();
+
             base.OnInspectorGUI();
-        
+
             if (GUILayout.Button("Save Texture"))
                 noise.SaveTexture();
 
@@ -33,13 +45,13 @@ namespace cosmicpotato.noisetools.Editor {
             EditorGUI.EndDisabledGroup();
             GUILayout.EndHorizontal();
 
+
             if (noise.realtime && EditorGUI.EndChangeCheck())
                 noise.CalculatePreview();
 
             showPreview = EditorGUILayout.Foldout(showPreview, "Preview", true);
             if (showPreview)
                 GUILayout.Box(noise.previewRT);
-
         }
     }
 }

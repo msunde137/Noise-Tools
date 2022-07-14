@@ -11,15 +11,17 @@ namespace cosmicpotato.noisetools.Editor {
     {
         [SerializeField] public List<Noise3D> noises; // list of noises to add
 
-        public override void GetPreviewShader()
+        public override void GetNoiseShaders()
         {
-            base.GetPreviewShader();
-            if (noiseShader)
+            shaderSelect.noiseShaders = new List<ComputeShader>(Resources.LoadAll<ComputeShader>("Shaders/Filters"));
+
+            for (int i = 0; i < shaderSelect.noiseShaders.Count; i++)
             {
-                if (noiseShader.HasKernel("Filter3D"))
-                    shaderHandle = noiseShader.FindKernel("Filter3D");
-                else
-                    Debug.LogError("Filter not recognized");
+                if (!shaderSelect.noiseShaders[i].HasKernel("Filter3D"))
+                {
+                    shaderSelect.noiseShaders.RemoveAt(i);
+                    i--;
+                }
             }
         }
 
@@ -32,9 +34,16 @@ namespace cosmicpotato.noisetools.Editor {
             result.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
             result.Create();
 
-            if (noiseShader && noiseShader.HasKernel("Filter3D") && noises.Count > 0)
+
+            if (!shaderSelect.noiseShader)
             {
-                shaderHandle = noiseShader.FindKernel("Filter3D");
+                GetNoiseShaders();
+                shaderSelect.noiseShader = shaderSelect.noiseShaders[0];
+            }
+
+            if (shaderSelect.noiseShader && shaderSelect.noiseShader.HasKernel("Filter3D") && noises.Count > 0)
+            {
+                shaderHandle = shaderSelect.noiseShader.FindKernel("Filter3D");
 
                 // iterate through all noises
                 for (int i = 0; i < noises.Count; i++)
@@ -66,11 +75,11 @@ namespace cosmicpotato.noisetools.Editor {
         /// <param name="resolution"></param>
         private RenderTexture AddNoise(RenderTexture input, RenderTexture result, int resolution)
         {
-            noiseShader.SetTexture(shaderHandle, "Input", input);
-            noiseShader.SetTexture(shaderHandle, "Result", result);
+            shaderSelect.noiseShader.SetTexture(shaderHandle, "Input", input);
+            shaderSelect.noiseShader.SetTexture(shaderHandle, "Result", result);
             uint kx, ky, kz;
-            noiseShader.GetKernelThreadGroupSizes(shaderHandle, out kx, out ky, out kz);
-            noiseShader.Dispatch(shaderHandle, (int)(resolution / kx) + 1, (int)(resolution / ky) + 1, (int)(resolution / kx) + 1);
+            shaderSelect.noiseShader.GetKernelThreadGroupSizes(shaderHandle, out kx, out ky, out kz);
+            shaderSelect.noiseShader.Dispatch(shaderHandle, (int)(resolution / kx) + 1, (int)(resolution / ky) + 1, (int)(resolution / kx) + 1);
             return result;
         }
     }
