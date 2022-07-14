@@ -10,4 +10,4 @@ A unity package for editing procedural textures, with options to use either pre-
 
 ## Samples
 
-[noise texture example](https://github.com/msunde137/noise-tools/blob/master/Samples~/Textures/NoiseTexture2D.png)
+[<img src="https://github.com/msunde137/noise-tools/blob/master/Samples~/Textures/NoiseTexture2D.png">](http://github.com/msunde137)
