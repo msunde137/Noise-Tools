@@ -93,15 +93,14 @@ namespace cosmicpotato.noisetools.Editor {
                 while (prop.NextVisible(false));
             }
 
-            // realtime editing
-            totalHeight += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
-
             // preview window
             if (config.showPreview && config)
             {
-                totalHeight += config.previewRes + EditorGUIUtility.standardVerticalSpacing;
+                // realtime editing
+                totalHeight += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
                 // save button
                 totalHeight += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing * 2;
+                totalHeight += config.previewRes + EditorGUIUtility.standardVerticalSpacing;
             }
             totalHeight += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
