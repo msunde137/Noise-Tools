@@ -52,7 +52,6 @@ namespace cosmicpotato.noisetools.Editor {
                     noise.CalculatePreview();
 
                 GUILayout.Box(noise.previewRT);
-
             }
         }
     }

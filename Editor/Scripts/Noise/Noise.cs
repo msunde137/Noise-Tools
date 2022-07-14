@@ -54,20 +54,31 @@ namespace cosmicpotato.noisetools.Editor {
         protected int shaderHandle = -1;        // shader id
         protected int previewHandle = -1;       // preview shader id
 
-        public void OnEnable()
+        private void OnEnable()
         {
-            LoadShaders();
-            if (!Application.isPlaying)
-            {
-                CreatePreviewRT();
-                CalculatePreview();
-            }
+            InitNoise();
+        }
+
+        private void Reset()
+        {
+            InitNoise();
         }
 
         private void OnValidate()
         {
             resolution = (int)Mathf.Clamp(resolution, 1, Mathf.Infinity);
             previewRes = (int)Mathf.Clamp(previewRes, 1, Mathf.Infinity);
+        }
+
+        public void InitNoise()
+        {
+            shaderSelect = new ShaderSelect();
+            LoadShaders();
+            if (!Application.isPlaying)
+            {
+                CreatePreviewRT();
+                CalculatePreview();
+            }
         }
 
         /// <summary>
