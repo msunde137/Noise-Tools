@@ -93,15 +93,16 @@ namespace cosmicpotato.noisetools.Editor {
                 while (prop.NextVisible(false));
             }
 
-            // save button
-            totalHeight += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing * 2;
-
             // realtime editing
             totalHeight += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             // preview window
             if (config.showPreview && config)
-                    totalHeight += config.previewRes + EditorGUIUtility.standardVerticalSpacing;
+            {
+                totalHeight += config.previewRes + EditorGUIUtility.standardVerticalSpacing;
+                // save button
+                totalHeight += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing * 2;
+            }
             totalHeight += EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
             return totalHeight;
@@ -165,10 +166,6 @@ namespace cosmicpotato.noisetools.Editor {
                         while (prop.NextVisible(false));
                     }
 
-                    // save texture button
-                    if (GUI.Button(EditorGUI.IndentedRect(new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight)), "Save Texture"))
-                        config.SaveTexture();
-                    y = NextLine(y);
                     y += EditorGUIUtility.standardVerticalSpacing;
 
                     // realtime preview
@@ -206,6 +203,11 @@ namespace cosmicpotato.noisetools.Editor {
 
             if (config.showPreview)
             {
+                // save texture button
+                if (GUI.Button(EditorGUI.IndentedRect(new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight)), "Save Texture"))
+                    config.SaveTexture();
+                y = NextLine(y);
+
                 GUI.Box(EditorGUI.IndentedRect(new Rect(position.x, y, position.width, config.previewRes)), config.previewRT);
                 y += config.previewRes + EditorGUIUtility.standardVerticalSpacing;
             }
