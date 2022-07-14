@@ -11,3 +11,6 @@ A unity package for editing procedural textures, with options to use either pre-
 ## Samples
 
 [<img src="https://github.com/msunde137/noise-tools/blob/master/Samples~/Textures/NoiseTexture2D.png">](http://github.com/msunde137)
+
+
+[<img src="https://github.com/msunde137/noise-tools/blob/master/ImgExamples/EditorExample.PNG">](http://github.com/msudne137)
