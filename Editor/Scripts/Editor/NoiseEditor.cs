@@ -32,26 +32,28 @@ namespace cosmicpotato.noisetools.Editor {
 
             base.OnInspectorGUI();
 
-            if (GUILayout.Button("Save Texture"))
-                noise.SaveTexture();
-
-            GUILayout.Space(5);
-
-            GUILayout.BeginHorizontal();
-            noise.realtime = GUILayout.Toggle(noise.realtime, "Realtime Editing");
-            EditorGUI.BeginDisabledGroup(noise.realtime);
-            if (GUILayout.Button("Calculate Noise"))
-                noise.CalculatePreview();
-            EditorGUI.EndDisabledGroup();
-            GUILayout.EndHorizontal();
-
-
-            if (noise.realtime && EditorGUI.EndChangeCheck())
-                noise.CalculatePreview();
-
             showPreview = EditorGUILayout.Foldout(showPreview, "Preview", true);
             if (showPreview)
+            {
+                if (GUILayout.Button("Save Texture"))
+                    noise.SaveTexture();
+
+                GUILayout.Space(5);
+
+                GUILayout.BeginHorizontal();
+                noise.realtime = GUILayout.Toggle(noise.realtime, "Realtime Editing");
+                EditorGUI.BeginDisabledGroup(noise.realtime);
+                if (GUILayout.Button("Calculate Noise"))
+                    noise.CalculatePreview();
+                EditorGUI.EndDisabledGroup();
+                GUILayout.EndHorizontal();
+                
+                if (noise.realtime && EditorGUI.EndChangeCheck())
+                    noise.CalculatePreview();
+
                 GUILayout.Box(noise.previewRT);
+
+            }
         }
     }
 }
