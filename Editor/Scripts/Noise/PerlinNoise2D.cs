@@ -46,18 +46,20 @@ namespace cosmicpotato.noisetools.Editor {
             24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
         };
 
-        public override void GetNoiseShaders()
+        public override void LoadShaders()
         {
-            shaderSelect.noiseShaders = new List<ComputeShader>(Resources.LoadAll<ComputeShader>("Shaders/Noise"));
-
-            for (int i = 0; i < shaderSelect.noiseShaders.Count; i++)
-            {
-                if (!shaderSelect.noiseShaders[i].HasKernel("Noise2D"))
-                {
-                    shaderSelect.noiseShaders.RemoveAt(i);
-                    i--;
-                }
-            }
+            base.LoadShaders();
+            shaderSelect.LoadShaders("Shaders/Noise", "Noise2D");
+            //shaderSelect.noiseShaders = new List<ComputeShader>(Resources.LoadAll<ComputeShader>("Shaders/Noise"));
+            //shaderSelect.noiseShader = shaderSelect.noiseShaders[0];
+            //for (int i = 0; i < shaderSelect.noiseShaders.Count; i++)
+            //{
+            //    if (!shaderSelect.noiseShaders[i].HasKernel("Noise2D"))
+            //    {
+            //        shaderSelect.noiseShaders.RemoveAt(i);
+            //        i--;
+            //    }
+            //}
         }
 
         public override RenderTexture CalculateNoise(Vector2 offset, Vector2 scale, int resolution)
@@ -69,13 +71,6 @@ namespace cosmicpotato.noisetools.Editor {
 
             permBuffer = new ComputeBuffer(perm.Length, sizeof(uint), ComputeBufferType.Structured);
             permBuffer.SetData(perm);
-
-
-            if (!shaderSelect.noiseShader)
-            {
-                GetNoiseShaders();
-                shaderSelect.noiseShader = shaderSelect.noiseShaders[0];
-            }
 
             if (shaderSelect.noiseShader && shaderSelect.noiseShader.HasKernel("Noise2D"))
             {

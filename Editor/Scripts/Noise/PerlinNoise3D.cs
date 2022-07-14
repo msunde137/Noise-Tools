@@ -46,18 +46,10 @@ namespace cosmicpotato.noisetools.Editor {
             24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
         };
 
-        public override void GetNoiseShaders()
+        public override void LoadShaders()
         {
-            shaderSelect.noiseShaders = new List<ComputeShader>(Resources.LoadAll<ComputeShader>("Shaders/Noise"));
-
-            for (int i = 0; i < shaderSelect.noiseShaders.Count; i++)
-            {
-                if (!shaderSelect.noiseShaders[i].HasKernel("Noise3D"))
-                {
-                    shaderSelect.noiseShaders.RemoveAt(i);
-                    i--;
-                }
-            }
+            base.LoadShaders();
+            shaderSelect.LoadShaders("Shaders/Noise", "Noise3D");
         }
 
         public override RenderTexture CalculateNoise(Vector3 offset, Vector3 scale, int resolution)
@@ -71,12 +63,6 @@ namespace cosmicpotato.noisetools.Editor {
 
             permBuffer = new ComputeBuffer(perm.Length, sizeof(uint), ComputeBufferType.Structured);
             permBuffer.SetData(perm);
-
-            if (!shaderSelect.noiseShader)
-            {
-                GetNoiseShaders();
-                shaderSelect.noiseShader = shaderSelect.noiseShaders[0];
-            }
 
             if (shaderSelect.noiseShader && shaderSelect.noiseShader.HasKernel("Noise3D"))
             {

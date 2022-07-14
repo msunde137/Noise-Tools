@@ -23,10 +23,13 @@ namespace cosmicpotato.noisetools.Editor {
             return CalculateNoise(offset, scale, resolution);
         }
         
-        public override void GetPreviewShader()
+        public override void LoadShaders()
         {
-            // search all assets for the right shader
-            previewShader = Resources.Load<ComputeShader>("Shaders/Filters/SliceVolume");
+            if (!Application.isPlaying)
+            {
+                // search all assets for the right shader
+                previewShader = Resources.Load<ComputeShader>("Shaders/Filters/SliceVolume");
+            }
         }
 
         /// <summary> 
@@ -59,26 +62,25 @@ namespace cosmicpotato.noisetools.Editor {
             // init preview
             if (!previewRT)
                 CreatePreviewRT();
-            if (!previewShader)
-                GetPreviewShader();
 
             if (previewShader && previewShader.HasKernel("Slicer"))
+            {
                 previewHandle = previewShader.FindKernel("Slicer");
+                // set shader vals
+                previewShader.SetTexture(previewHandle, "Volume", CalculateNoise());
+                previewShader.SetTexture(previewHandle, "Result", previewRT);
+                previewShader.SetInt("axis", axis);
+                previewShader.SetInt("layer", layer - 1);
+
+                // get threadgroups
+                uint kx = 0, ky = 0, kz = 0;
+                previewShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
+                previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, (int)(previewRes / kz) + 1);
+            }
             else if (!previewShader)
                 Debug.LogError("Preview shader not found");
             else
                 Debug.LogError("Invalid kernel for preview shader");
-
-            // set shader vals
-            previewShader.SetTexture(previewHandle, "Volume", CalculateNoise());
-            previewShader.SetTexture(previewHandle, "Result", previewRT);
-            previewShader.SetInt("axis", axis);
-            previewShader.SetInt("layer", layer-1);
-
-            // get threadgroups
-            uint kx = 0, ky = 0, kz = 0;
-            previewShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
-            previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, (int)(previewRes / kz) + 1);
         }
     }
 }

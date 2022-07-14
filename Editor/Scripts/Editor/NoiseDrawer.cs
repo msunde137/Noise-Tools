@@ -4,40 +4,53 @@ using System;
 using System.Collections.Generic;
 
 namespace cosmicpotato.noisetools.Editor {
-    [CustomPropertyDrawer(typeof(ShaderSelect), true)]
-    [CanEditMultipleObjects]
+    [CustomPropertyDrawer(typeof(ShaderSelect))]
     public class ShaderSelectEditor : PropertyDrawer
     {
-        protected string[] options;
+        bool custom = false;
+
+        public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
+        {
+            if (custom)
+                return EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing + base.GetPropertyHeight(property, label);
+            return base.GetPropertyHeight(property, label);
+        }
 
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            //EditorGUI.BeginProperty(position, label, property);
+            EditorGUI.BeginProperty(position, label, property);
 
-            //var data = (ScriptableObject)property.objectReferenceValue;
-            //var config = (ShaderSelect)property.objectReferenceValue;
+            int size = property.FindPropertyRelative("options").arraySize;
+            List<string> options = new List<string>();
+            for (int i = 0; i < size; i++)
+                options.Add(property.FindPropertyRelative("options").GetArrayElementAtIndex(i).stringValue);
+            options.Add("Custom Shader");
 
-
-
-            Noise noise = (Noise)property.FindPropertyRelative("noiseShaders").serializedObject.targetObject;
-            List<ComputeShader> noiseShaders = noise.shaderSelect.noiseShaders;
-
-            if (noiseShaders != null && noiseShaders.Count > 0)
+            if (property.FindPropertyRelative("noiseShaders").arraySize > 0)
             {
-                options = new string[noiseShaders.Count];
-                for (int j = 0; j < noiseShaders.Count; j++)
+                int index = property.FindPropertyRelative("index").intValue;
+
+                if (index >= options.Count)
+                    index = 0;
+
+                property.FindPropertyRelative("index").intValue = EditorGUI.Popup(new Rect(position.x, position.y, position.width, EditorGUIUtility.singleLineHeight), "Shader", index, options.ToArray());
+
+                if (property.FindPropertyRelative("index").intValue < options.Count - 1)
                 {
-                    options[j] = noiseShaders[j].name;
+                    property.FindPropertyRelative("noiseShader").objectReferenceValue = 
+                        property.FindPropertyRelative("noiseShaders").GetArrayElementAtIndex(property.FindPropertyRelative("index").intValue).objectReferenceValue;
+                    custom = false;
+                }
+                else
+                {
+                    float y = position.y + EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+                    EditorGUI.PropertyField(new Rect(position.x, y, position.width, EditorGUIUtility.singleLineHeight), property.FindPropertyRelative("noiseShader"));
+                    custom = true;
                 }
 
-                if (noise.shaderSelect.shadersIndex >= options.Length)
-                    noise.shaderSelect.shadersIndex = 0;
-            
-                noise.shaderSelect.shadersIndex = EditorGUI.Popup(position, "Shader", noise.shaderSelect.shadersIndex, options);
-                if (noiseShaders.Count > 0)
-                    noise.shaderSelect.noiseShader = noise.shaderSelect.noiseShaders[noise.shaderSelect.shadersIndex];
             }
 
+            EditorGUI.EndProperty();
         }
     }
 

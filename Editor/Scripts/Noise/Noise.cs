@@ -8,9 +8,33 @@ namespace cosmicpotato.noisetools.Editor {
     [Serializable]
     public class ShaderSelect
     {
-        public ComputeShader noiseShader;           // noise shader
-        public List<ComputeShader> noiseShaders;    // list of all usable noise shaders
-        public int shadersIndex = 0;                // shader list index
+        public ComputeShader noiseShader;                                       // noise shader
+        public List<ComputeShader> noiseShaders = new List<ComputeShader>();    // list of all usable noise shaders
+        public List<string> options = new List<string>();                       // list of shader names
+        public int index = 0;                                                   // shader list index
+
+        public ShaderSelect()
+        {
+            noiseShader = null;
+            noiseShaders = new List<ComputeShader>();
+            options = new List<string>();
+            index = 0;
+        }
+
+        public void LoadShaders(string relativePath, string kernel)
+        {
+            var temp = new List<ComputeShader>(Resources.LoadAll<ComputeShader>(relativePath));
+
+            for (int i = 0; i < temp.Count; i++)
+            {
+                if (temp[i].HasKernel(kernel) && !noiseShaders.Contains(temp[i]))
+                {
+                    noiseShaders.Add(temp[i]);
+                    options.Add(temp[i].name);
+                }
+            }   
+            noiseShader = noiseShaders[0];
+        }
     }
 
     /// <summary>
@@ -18,7 +42,7 @@ namespace cosmicpotato.noisetools.Editor {
     /// </summary>
     public abstract class Noise : ScriptableObject
     {
-        public ShaderSelect shaderSelect;           // shader selector
+        public ShaderSelect shaderSelect = new ShaderSelect();           // shader selector
         public int resolution = 20;                 // resolution of texture
 
         [HideInInspector] public RenderTexture previewRT;   // preview render texture
@@ -29,6 +53,16 @@ namespace cosmicpotato.noisetools.Editor {
         protected ComputeShader previewShader;  // preview shader
         protected int shaderHandle = -1;        // shader id
         protected int previewHandle = -1;       // preview shader id
+
+        public void OnEnable()
+        {
+            LoadShaders();
+            if (!Application.isPlaying)
+            {
+                CreatePreviewRT();
+                CalculatePreview();
+            }
+        }
 
         private void OnValidate()
         {
@@ -49,19 +83,18 @@ namespace cosmicpotato.noisetools.Editor {
         }
 
         /// <summary>
-        /// Find and initialize appropriate preview shader
-        /// </summary>
-        public abstract void GetPreviewShader();
-        /// <summary>
         /// find all usable noise shaders
         /// </summary>
-        public abstract void GetNoiseShaders();
+        public abstract void LoadShaders();
+
         /// <summary>
         /// Convert noise to preview render texture
         /// </summary>
         public abstract void CalculatePreview();
+
         /// <returns>Calculated noise texture</returns>
         public abstract RenderTexture CalculateNoise();
+        
         /// <summary>
         /// Save noise texture to png
         /// </summary>

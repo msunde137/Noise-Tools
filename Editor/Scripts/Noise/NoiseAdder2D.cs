@@ -12,18 +12,10 @@ namespace cosmicpotato.noisetools.Editor {
     {
         [SerializeField] public List<Noise2D> noises; // list of noises to add
 
-        public override void GetNoiseShaders()
+        public override void LoadShaders()
         {
-            shaderSelect.noiseShaders = new List<ComputeShader>(Resources.LoadAll<ComputeShader>("Shaders/Filters"));
-
-            for (int i = 0; i < shaderSelect.noiseShaders.Count; i++)
-            {
-                if (!shaderSelect.noiseShaders[i].HasKernel("Filter2D"))
-                {
-                    shaderSelect.noiseShaders.RemoveAt(i);
-                    i--;
-                }
-            }
+            base.LoadShaders();
+            shaderSelect.LoadShaders("Shaders/Filters", "Filter2D");
         }
 
         public override RenderTexture CalculateNoise(Vector2 offset, Vector2 scale, int resolution)
@@ -32,13 +24,6 @@ namespace cosmicpotato.noisetools.Editor {
             RenderTexture result = new RenderTexture(resolution, resolution, 0, RenderTextureFormat.ARGB32);
             result.enableRandomWrite = true;
             result.Create();
-
-
-            if (!shaderSelect.noiseShader)
-            {
-                GetNoiseShaders();
-                shaderSelect.noiseShader = shaderSelect.noiseShaders[0];
-            }
 
             if (shaderSelect.noiseShader && shaderSelect.noiseShader.HasKernel("Filter2D") && noises.Count > 0)
             {

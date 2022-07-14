@@ -11,18 +11,10 @@ namespace cosmicpotato.noisetools.Editor {
     {
         [SerializeField] public List<Noise3D> noises; // list of noises to add
 
-        public override void GetNoiseShaders()
+        public override void LoadShaders()
         {
-            shaderSelect.noiseShaders = new List<ComputeShader>(Resources.LoadAll<ComputeShader>("Shaders/Filters"));
-
-            for (int i = 0; i < shaderSelect.noiseShaders.Count; i++)
-            {
-                if (!shaderSelect.noiseShaders[i].HasKernel("Filter3D"))
-                {
-                    shaderSelect.noiseShaders.RemoveAt(i);
-                    i--;
-                }
-            }
+            base.LoadShaders();
+            shaderSelect.LoadShaders("Shaders/Filters", "Filter3D");
         }
 
         public override RenderTexture CalculateNoise(Vector3 offset, Vector3 scale, int resolution)
@@ -33,13 +25,6 @@ namespace cosmicpotato.noisetools.Editor {
             result.volumeDepth = resolution;
             result.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
             result.Create();
-
-
-            if (!shaderSelect.noiseShader)
-            {
-                GetNoiseShaders();
-                shaderSelect.noiseShader = shaderSelect.noiseShaders[0];
-            }
 
             if (shaderSelect.noiseShader && shaderSelect.noiseShader.HasKernel("Filter3D") && noises.Count > 0)
             {

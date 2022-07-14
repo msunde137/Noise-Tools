@@ -20,10 +20,13 @@ namespace cosmicpotato.noisetools.Editor {
             return CalculateNoise(offset, scale, resolution);
         }
 
-        public override void GetPreviewShader()
+        public override void LoadShaders()
         {
-            // look for the correct preview shader in all assets
-            previewShader = Resources.Load<ComputeShader>("Shaders/Filters/Scale2D");
+            if (!Application.isPlaying)
+            {
+                // look for the correct preview shader in all assets
+                previewShader = Resources.Load<ComputeShader>("Shaders/Filters/Scale2D");
+            }
         }
 
         /// <summary>
@@ -69,20 +72,20 @@ namespace cosmicpotato.noisetools.Editor {
             // init preview
             if (!previewRT)
                 CreatePreviewRT();
-            if (!previewShader)
-                GetPreviewShader();
 
             if (previewShader && previewShader.HasKernel("Scale2D"))
+            {
                 previewHandle = previewShader.FindKernel("Scale2D");
+                previewShader.SetTexture(previewHandle, "Input", CalculateNoise());
+                previewShader.SetTexture(previewHandle, "Result", previewRT);
+                uint kx = 0, ky = 0, kz = 0;
+                previewShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
+                previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, 1);
+            }
             else if (!previewShader)
                 Debug.LogError("Preview shader not found");
             else
                 Debug.LogError("Invalid kernel for preview shader");
-            previewShader.SetTexture(previewHandle, "Input", CalculateNoise());
-            previewShader.SetTexture(previewHandle, "Result", previewRT);
-            uint kx = 0, ky = 0, kz = 0;
-            previewShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
-            previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, 1);
         }
 
     }
