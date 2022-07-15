@@ -15,3 +15,10 @@ This is the changelog for noise-tools.
 ### Known Bugs
 - D3D11: Failed to create render texture resource. This often occurs when working with textures at higher resolutions. Still working on a fix for this.
 
+## [1.3.2] - 2022-07-15
+### Added
+- tooltips
+
+### Known Bugs
+- D3D11: Failed to create render texture resource. This often occurs when working with textures at higher resolutions. I have an idea of where it's happening, waiting to see if my fix worked.
+
