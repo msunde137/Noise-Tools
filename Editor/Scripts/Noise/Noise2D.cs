@@ -7,8 +7,10 @@ namespace cosmicpotato.noisetools.Editor {
     /// </summary>
     public abstract class Noise2D : Noise
     {
-        public Vector2 offset = new Vector2(0, 0);  // noise texture offset
-        public Vector2 scale = new Vector2(1, 1);   // noise scale
+        [Tooltip("Offset of the noise function")]
+        public Vector2 offset = new Vector2(0, 0);   // offset of noise texture
+        [Tooltip("Scale of the noise function")]
+        public Vector2 scale = new Vector2(1, 1);    // scale of noise
 
         /// <param name="offset"></param>
         /// <param name="scale"></param>
@@ -75,12 +77,14 @@ namespace cosmicpotato.noisetools.Editor {
 
             if (previewShader && previewShader.HasKernel("Scale2D"))
             {
+                RenderTexture rt = CalculateNoise();
                 previewHandle = previewShader.FindKernel("Scale2D");
-                previewShader.SetTexture(previewHandle, "Input", CalculateNoise());
+                previewShader.SetTexture(previewHandle, "Input", rt);
                 previewShader.SetTexture(previewHandle, "Result", previewRT);
                 uint kx = 0, ky = 0, kz = 0;
                 previewShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
                 previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, 1);
+                rt.Release();
             }
             else if (!previewShader)
                 Debug.LogError("Preview shader not found");

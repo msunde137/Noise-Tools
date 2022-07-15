@@ -7,10 +7,14 @@ namespace cosmicpotato.noisetools.Editor {
     /// </summary>
     public abstract class Noise3D : Noise
     {
+        [Tooltip("Offset of the noise function")]
         public Vector3 offset = new Vector3(0, 0, 0);   // offset of noise texture
+        [Tooltip("Scale of the noise function")]
         public Vector3 scale = new Vector3(1, 1, 1);    // scale of noise
 
+        [Tooltip("Preview axis")]
         [HideInInspector] public int axis;  // preview axis
+        [Tooltip("Preview layer")]
         [HideInInspector] public int layer; // preview layer
 
         /// <param name="offset"></param>
@@ -65,9 +69,10 @@ namespace cosmicpotato.noisetools.Editor {
 
             if (previewShader && previewShader.HasKernel("Slicer"))
             {
+                RenderTexture rt = CalculateNoise();
                 previewHandle = previewShader.FindKernel("Slicer");
                 // set shader vals
-                previewShader.SetTexture(previewHandle, "Volume", CalculateNoise());
+                previewShader.SetTexture(previewHandle, "Volume", rt);
                 previewShader.SetTexture(previewHandle, "Result", previewRT);
                 previewShader.SetInt("axis", axis);
                 previewShader.SetInt("layer", layer - 1);
@@ -76,6 +81,7 @@ namespace cosmicpotato.noisetools.Editor {
                 uint kx = 0, ky = 0, kz = 0;
                 previewShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
                 previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, (int)(previewRes / kz) + 1);
+                rt.Release();
             }
             else if (!previewShader)
                 Debug.LogError("Preview shader not found");

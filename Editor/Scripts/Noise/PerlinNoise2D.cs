@@ -6,9 +6,11 @@ namespace cosmicpotato.noisetools.Editor {
     [CreateAssetMenu(fileName ="New Perlin Noise", menuName = "Noise/2D Perlin Noise")]
     public class PerlinNoise2D : Noise2D
     {
+        [Tooltip("Determines the random function outcome")]
         public uint seed = 10;      // seed for random function
+        [Tooltip("Determines the sharpness of the gradient")]
         public float weight = 1;    // weight of noise
-        [Range(0f, 1f)] 
+        [Range(0f, 1f), Tooltip("Opacity of the noise texture")] 
         public float alpha = 1;     // alpha of noise texture
 
         ComputeBuffer permBuffer;   // random permutation buffer

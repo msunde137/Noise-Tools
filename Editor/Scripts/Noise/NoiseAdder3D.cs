@@ -9,6 +9,7 @@ namespace cosmicpotato.noisetools.Editor {
     [CreateAssetMenu(fileName = "New 3D Noise Adder", menuName = "Noise/3D Noise Adder")]
     public class NoiseAdder3D : Noise3D
     {
+        [Tooltip("List of noises to operate on")]
         [SerializeField] public List<Noise3D> noises; // list of noises to add
 
         public override void LoadShaders()

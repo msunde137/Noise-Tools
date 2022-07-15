@@ -10,6 +10,7 @@ namespace cosmicpotato.noisetools.Editor {
     [CreateAssetMenu(fileName = "New 2D Noise Adder", menuName = "Noise/2D Noise Adder")]
     public class NoiseAdder2D : Noise2D
     {
+        [Tooltip("List of noises to operate on")]
         [SerializeField] public List<Noise2D> noises; // list of noises to add
 
         public override void LoadShaders()

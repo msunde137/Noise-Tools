@@ -42,7 +42,9 @@ namespace cosmicpotato.noisetools.Editor {
     /// </summary>
     public abstract class Noise : ScriptableObject
     {
+        [Tooltip("Choose noise type")]
         public ShaderSelect shaderSelect = new ShaderSelect();           // shader selector
+        [Tooltip("Pixel resolution of noise texture")]
         public int resolution = 20;                 // resolution of texture
 
         [HideInInspector] public RenderTexture previewRT;   // preview render texture

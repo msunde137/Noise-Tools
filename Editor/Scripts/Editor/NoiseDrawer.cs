@@ -146,18 +146,13 @@ namespace cosmicpotato.noisetools.Editor {
                             {
                                 float height = EditorGUI.GetPropertyHeight(prop, new GUIContent(prop.displayName), true);
                                 Rect pos = new Rect(position.x, y, position.width, height);
-                                if (prop.name == "alpha")
-                                    prop.floatValue = EditorGUI.Slider(pos, prop.displayName, prop.floatValue, 0, 1);
-                                else
+                                try
                                 {
-                                    try
-                                    {
-                                        EditorGUI.PropertyField(pos, prop, true);
-                                    }
-                                    catch (InvalidOperationException)
-                                    {
-                                        continue;
-                                    }
+                                    EditorGUI.PropertyField(pos, prop, true);
+                                }
+                                catch (InvalidOperationException)
+                                {
+                                    continue;
                                 }
                                 y += height + EditorGUIUtility.standardVerticalSpacing;
                             }
