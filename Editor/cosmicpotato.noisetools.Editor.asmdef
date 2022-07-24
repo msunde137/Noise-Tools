@@ -2,5 +2,5 @@
     "name": "cosmicpotato.noisetools.Editor",
     "references": [
         "UnityEditor"
-    ],
+    ]
 }
