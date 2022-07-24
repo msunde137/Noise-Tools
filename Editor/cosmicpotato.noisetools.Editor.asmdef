@@ -1,3 +1,6 @@
 {
-    "name": "cosmicpotato.noisetools.Editor"
+    "name": "cosmicpotato.noisetools.Editor",
+    "references": [
+        "UnityEditor"
+    ],
 }
