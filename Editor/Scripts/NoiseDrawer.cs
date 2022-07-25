@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.Collections.Generic;
+using cosmicpotato.noisetools.Runtime;
 
 namespace cosmicpotato.noisetools.Editor {
     [CustomPropertyDrawer(typeof(ShaderSelect))]

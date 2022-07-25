@@ -1,7 +1,9 @@
 {
     "name": "cosmicpotato.noisetools.Editor",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:46de8253721fae14ba276a8088999920"
+    ],
     "includePlatforms": [
         "Editor"
     ],

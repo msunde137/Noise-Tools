@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using cosmicpotato.noisetools.Runtime;
+using UnityEngine;
 using UnityEditor;
 
 namespace cosmicpotato.noisetools.Editor {

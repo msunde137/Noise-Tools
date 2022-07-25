@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
+using cosmicpotato.noisetools.Runtime;
 
 namespace cosmicpotato.noisetools.Editor {
     [CustomEditor(typeof(Noise), true)]
