@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace cosmicpotato.noisetools.Editor {
+namespace cosmicpotato.noisetools.Runtime {
     /// <summary>
     /// 3D noise adder subclass
     /// </summary>

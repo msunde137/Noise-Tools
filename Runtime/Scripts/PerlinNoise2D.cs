@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace cosmicpotato.noisetools.Editor {
+namespace cosmicpotato.noisetools.Runtime {
     [CreateAssetMenu(fileName ="New Perlin Noise", menuName = "Noise/2D Perlin Noise")]
     public class PerlinNoise2D : Noise2D
     {

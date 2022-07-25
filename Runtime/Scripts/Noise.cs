@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace cosmicpotato.noisetools.Editor {
+namespace cosmicpotato.noisetools.Runtime {
 
     [Serializable]
     public class ShaderSelect

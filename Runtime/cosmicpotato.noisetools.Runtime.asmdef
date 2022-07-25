@@ -1,9 +1,11 @@
 {
-    "name": "cosmicpotato.noisetools.Editor",
+    "name": "cosmicpotato.noisetools.Runtime",
     "rootNamespace": "",
     "references": [],
     "includePlatforms": [
-        "Editor"
+        "iOS",
+        "WindowsStandalone32",
+        "WindowsStandalone64"
     ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

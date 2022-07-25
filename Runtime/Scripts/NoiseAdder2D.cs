@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 
-namespace cosmicpotato.noisetools.Editor {
+namespace cosmicpotato.noisetools.Runtime {
     /// <summary>
     /// Opperates on a list of noises
     /// </summary>
