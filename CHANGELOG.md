@@ -25,3 +25,7 @@ This is the changelog for noise-tools.
 ## [1.3.3] - 2022-07-24
 ### Fixed
 - reworked directory structure and fixed .asmdef files
+
+## [1.3.4] - 2022-07-24
+### Added
+- Citation headers in noise shaders

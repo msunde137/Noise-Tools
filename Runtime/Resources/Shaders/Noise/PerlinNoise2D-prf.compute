@@ -1,7 +1,11 @@
+//
+// 2D perlin noise from a pseudo-random function
+//
+
+
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Noise2D
 
-// Generate perlin noise from a pseudo-random function
 RWTexture2D<float4> Result;
 
 float2 offset;
