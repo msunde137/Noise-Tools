@@ -1,0 +1,23 @@
+// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel Preview2D
+
+// Scales input textre to the size of result texture without interpolatoin
+RWStructuredBuffer<double2> Input;
+RWTexture2D<float4> Result;
+
+uint resolution;
+
+[numthreads(8,8,1)]
+void Preview2D (uint3 id : SV_DispatchThreadID)
+{
+    uint2 rsize;
+    Result.GetDimensions(rsize.x, rsize.y);
+    uint2 pos;
+    pos.x = float(resolution) / float(rsize.x) * float(id.x);
+    pos.y = float(resolution) / float(rsize.y) * float(id.y);
+
+    uint inid = pos.x + pos.y * resolution;
+    double2 input = Input[inid];
+    Result[id.xy] = float4(input.x, input.x, input.x, input.y);
+    //Result[id.xy] = float4(input.x, input.x, input.x, input.y);
+}

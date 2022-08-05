@@ -48,28 +48,20 @@ namespace cosmicpotato.noisetools.Runtime {
             24, 72, 243, 141, 128, 195, 78, 66, 215, 61, 156, 180
         };
 
+        ComputeBuffer debugBuffer;
+        double[] debug;
+
         public override void LoadShaders()
         {
             base.LoadShaders();
             shaderSelect.LoadShaders("Shaders/Noise", "Noise2D");
-            //shaderSelect.noiseShaders = new List<ComputeShader>(Resources.LoadAll<ComputeShader>("Shaders/Noise"));
-            //shaderSelect.noiseShader = shaderSelect.noiseShaders[0];
-            //for (int i = 0; i < shaderSelect.noiseShaders.Count; i++)
-            //{
-            //    if (!shaderSelect.noiseShaders[i].HasKernel("Noise2D"))
-            //    {
-            //        shaderSelect.noiseShaders.RemoveAt(i);
-            //        i--;
-            //    }
-            //}
         }
 
-        public override RenderTexture CalculateNoise(Vector2 offset, Vector2 scale, int resolution)
+        public override double[,] CalculateNoise(Vector2 offset, Vector2 scale, int resolution)
         {
-            // init render texture
-            RenderTexture result = new RenderTexture(resolution, resolution, 0, RenderTextureFormat.ARGB32);
-            result.enableRandomWrite = true;
-            result.Create();
+            double[,] result = new double[resolution * resolution, 2];
+            // init compute buffer
+            ComputeBuffer cb = new ComputeBuffer(result.GetLength(0), sizeof(double) * 2, ComputeBufferType.Structured);
 
             permBuffer = new ComputeBuffer(perm.Length, sizeof(uint), ComputeBufferType.Structured);
             permBuffer.SetData(perm);
@@ -78,8 +70,9 @@ namespace cosmicpotato.noisetools.Runtime {
             {
                 shaderHandle = shaderSelect.noiseShader.FindKernel("Noise2D");
                 scale = scale * (float)resolution; // keep scale of noise constant with changing resolution
-                shaderSelect.noiseShader.SetTexture(shaderHandle, "Result", result);
+                shaderSelect.noiseShader.SetBuffer(shaderHandle, "Result", cb);
                 shaderSelect.noiseShader.SetBuffer(shaderHandle, "perm", permBuffer);
+                shaderSelect.noiseShader.SetInt("resolution", resolution);
                 shaderSelect.noiseShader.SetFloats("scale", new float[]{ scale.x, scale.y });
                 shaderSelect.noiseShader.SetFloats("offset", new float[]{ offset.x, offset.y });
                 shaderSelect.noiseShader.SetFloat("noiseWeight", weight);
@@ -89,6 +82,8 @@ namespace cosmicpotato.noisetools.Runtime {
                 uint kx = 0, ky = 0, kz = 0;
                 shaderSelect.noiseShader.GetKernelThreadGroupSizes(shaderHandle, out kx, out ky, out kz);
                 shaderSelect.noiseShader.Dispatch(shaderHandle, (int)(resolution / kx) + 1, (int)(resolution / ky) + 1, 1);
+
+                cb.GetData(result);
             }
 
             permBuffer.Release();

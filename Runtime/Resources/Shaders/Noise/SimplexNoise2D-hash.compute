@@ -9,9 +9,10 @@
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
-RWTexture2D<float4> Result;
+RWStructuredBuffer<double2> Result;
 RWStructuredBuffer<uint> perm;
 
+int resolution;
 float2 offset;
 float2 scale;
 float noiseWeight;
@@ -127,6 +128,6 @@ static float noise(float xin, float yin) {
 [numthreads(8,8,1)]
 void Noise2D (uint3 id : SV_DispatchThreadID)
 {
-    float n = noise(id.x, id.y) * noiseWeight + 0.5;
-    Result[id.xy] = float4(n, n, n, alpha);
+    double n = noise(id.x, id.y) * noiseWeight + 0.5;
+    Result[id.x + id.y * resolution] = double2(n, alpha);
 }

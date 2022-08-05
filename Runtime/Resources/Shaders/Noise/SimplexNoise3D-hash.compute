@@ -9,7 +9,7 @@
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
-RWTexture3D<float4> Result;
+RWStructuredBuffer<float4> Result;
 RWStructuredBuffer<uint> perm;
 
 float3 offset;

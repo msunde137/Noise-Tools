@@ -7,8 +7,9 @@
 // Each #kernel tells which function to compile; you can have many kernels
 #pragma kernel Noise2D
 
-RWTexture2D<float4> Result;
+RWStructuredBuffer<double2> Result;
 RWStructuredBuffer<uint> perm;
+AppendStructuredBuffer<double> debug;
 
 float2 offset;
 float2 scale;
@@ -16,6 +17,8 @@ float noiseWeight;
 float alpha;
 int seed;
 
+uint resolution;
+ 
 // gradient vectors
 static int grad3[12][3] = {
 	{1,1,0},{-1,1,0}, {1,-1,0}, {-1,-1,0},
@@ -24,26 +27,26 @@ static int grad3[12][3] = {
 };
 
 // This method is a *lot* faster than using (int)Math.floor(x)
-int fastfloor(float x) {
+int fastfloor(double x) {
 	return x > 0 ? (int)x : (int)x - 1;
 }
 
 // classic dot product
-float dot(float2 g, float x, float y) {
+double dot(double2 g, double x, double y) {
 	return g.x * x + g.y * y;
 }
 
 // alpha blend
-float mix(float a, float b, float t) {
+double mix(double a, double b, double t) {
 	return (1 - t) * a + t * b;
 }
 
-float fade(float t) {
+double fade(double t) {
 	return t * t * t * (t * (t * 6 - 15) + 10);
 }
 
 // Classic Perlin noise, 3D version
-float noise(float x, float y/*, float z*/) {
+double noise(double x, double y/*, double z*/) {
 	y = y / scale.y + offset.y;
 	x = x / scale.x + offset.x;
 
@@ -75,19 +78,19 @@ float noise(float x, float y/*, float z*/) {
 	// g111 = grad3[gi111];
 
 	// Calculate noise contributions from each of the four corners
-	float n00 = dot(float2(grad3[gi00][0], grad3[gi00][1]), x, y);
-	float n10 = dot(float2(grad3[gi10][0], grad3[gi10][1]), x - 1, y);
-	float n01 = dot(float2(grad3[gi01][0], grad3[gi01][1]), x, y - 1);
-	float n11 = dot(float2(grad3[gi11][0], grad3[gi11][1]), x - 1, y - 1);
+	double n00 = dot(double2(grad3[gi00][0], grad3[gi00][1]), x, y);
+	double n10 = dot(double2(grad3[gi10][0], grad3[gi10][1]), x - 1, y);
+	double n01 = dot(double2(grad3[gi01][0], grad3[gi01][1]), x, y - 1);
+	double n11 = dot(double2(grad3[gi11][0], grad3[gi11][1]), x - 1, y - 1);
 
 	// Compute the fade curve value for each of x, y
-	float u = fade(x);
-	float v = fade(y);
+	double u = fade(x);
+	double v = fade(y);
 
 	// Interpolate along x and y axes
-	float nx0 = mix(n00, n10, u);
-	float nx1 = mix(n01, n11, u);
-	float nxy = mix(nx0, nx1, v);
+	double nx0 = mix(n00, n10, u);
+	double nx1 = mix(n01, n11, u);
+	double nxy = mix(nx0, nx1, v);
 
 	return nxy;
 }
@@ -95,6 +98,6 @@ float noise(float x, float y/*, float z*/) {
 [numthreads(8, 8, 1)]
 void Noise2D(uint3 id : SV_DispatchThreadID)
 {
-	float n = noise(id.x, id.y) * noiseWeight + 0.5;
-	Result[id.xy] = float4(n, n, n, alpha);
+	double n = noise(id.x, id.y) * noiseWeight + 0.5;
+	Result[id.x + id.y * resolution] = double2(n, alpha);
 }

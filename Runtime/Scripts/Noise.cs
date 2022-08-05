@@ -106,7 +106,7 @@ namespace cosmicpotato.noisetools.Runtime {
         public abstract void CalculatePreview();
 
         /// <returns>Calculated noise texture</returns>
-        public abstract RenderTexture CalculateNoise();
+        public abstract double[,] CalculateNoise();
         
         /// <summary>
         /// Save noise texture to png

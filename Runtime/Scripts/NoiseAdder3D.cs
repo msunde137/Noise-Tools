@@ -18,39 +18,40 @@ namespace cosmicpotato.noisetools.Runtime {
             shaderSelect.LoadShaders("Shaders/Filters", "Filter3D");
         }
 
-        public override RenderTexture CalculateNoise(Vector3 offset, Vector3 scale, int resolution)
+        public override double[,] CalculateNoise(Vector3 offset, Vector3 scale, int resolution)
         {
             // initialize 3D render texture
-            RenderTexture result = new RenderTexture(resolution, resolution, 0, RenderTextureFormat.ARGB32);
-            result.enableRandomWrite = true;
-            result.volumeDepth = resolution;
-            result.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
-            result.Create();
+            //RenderTexture result = new RenderTexture(resolution, resolution, 0, RenderTextureFormat.ARGB32);
+            //result.enableRandomWrite = true;
+            //result.volumeDepth = resolution;
+            //result.dimension = UnityEngine.Rendering.TextureDimension.Tex3D;
+            //result.Create();
 
-            if (shaderSelect.noiseShader && shaderSelect.noiseShader.HasKernel("Filter3D") && noises.Count > 0)
-            {
-                shaderHandle = shaderSelect.noiseShader.FindKernel("Filter3D");
+            //if (shaderSelect.noiseShader && shaderSelect.noiseShader.HasKernel("Filter3D") && noises.Count > 0)
+            //{
+            //    shaderHandle = shaderSelect.noiseShader.FindKernel("Filter3D");
 
-                // iterate through all noises
-                for (int i = 0; i < noises.Count; i++)
-                {
-                    if (!noises[i]) continue;
-                    if (noises[i] == this)
-                    {
-                        noises.Remove(noises[i]);
-                        Debug.Log("Cannot add this noise adder to itself");
-                        i--;
-                        continue;
-                    }
-                    noises[i].resolution = resolution;
-                    RenderTexture rt = noises[i].CalculateNoise(
-                        noises[i].offset + new Vector3(offset.x / noises[i].scale.x, offset.y / noises[i].scale.y, offset.z / noises[i].scale.z), 
-                        Vector3.Scale(noises[i].scale, scale), resolution);
-                    result = AddNoise(rt, result, resolution);
-                }
-            }
+            //    // iterate through all noises
+            //    for (int i = 0; i < noises.Count; i++)
+            //    {
+            //        if (noises[i] != null) continue;
+            //        if (noises[i] == this)
+            //        {
+            //            noises.Remove(noises[i]);
+            //            Debug.Log("Cannot add this noise adder to itself");
+            //            i--;
+            //            continue;
+            //        }
+            //        noises[i].resolution = resolution;
+            //        double[] rt = noises[i].CalculateNoise(
+            //            noises[i].offset + new Vector3(offset.x / noises[i].scale.x, offset.y / noises[i].scale.y, offset.z / noises[i].scale.z), 
+            //            Vector3.Scale(noises[i].scale, scale), resolution);
+            //        result = AddNoise(rt, result, resolution);
+            //    }
+            //}
 
-            return result;
+            //return result;
+            return new double[0,0];
         }
 
         /// <summary>

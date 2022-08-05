@@ -19,35 +19,35 @@ namespace cosmicpotato.noisetools.Runtime {
             shaderSelect.LoadShaders("Shaders/Filters", "Filter2D");
         }
 
-        public override RenderTexture CalculateNoise(Vector2 offset, Vector2 scale, int resolution)
+        public override double[,] CalculateNoise(Vector2 offset, Vector2 scale, int resolution)
         {
             // init render texture
-            RenderTexture result = new RenderTexture(resolution, resolution, 0, RenderTextureFormat.ARGB32);
-            result.enableRandomWrite = true;
-            result.Create();
+            //double[,] result = new double[resolution * resolution, 2];
+            //ComputeBuffer cb = new c
 
-            if (shaderSelect.noiseShader && shaderSelect.noiseShader.HasKernel("Filter2D") && noises.Count > 0)
-            {
-                shaderHandle = shaderSelect.noiseShader.FindKernel("Filter2D");
+            //if (shaderSelect.noiseShader && shaderSelect.noiseShader.HasKernel("Filter2D") && noises.Count > 0)
+            //{
+            //    shaderHandle = shaderSelect.noiseShader.FindKernel("Filter2D");
 
-                // iterate through all noises
-                for (int i = 0;  i < noises.Count; i++)
-                {
-                    if (!noises[i]) continue;
-                    if (noises[i] == this)
-                    {
-                        noises.Remove(noises[i]);
-                        Debug.Log("Cannot add this noise adder to itself");
-                        i--;
-                        continue;
-                    }
-                    noises[i].resolution = resolution;
-                    RenderTexture rt = noises[i].CalculateNoise(noises[i].offset + offset / noises[i].scale, noises[i].scale * scale, resolution);
-                    result = AddNoise(rt, result, resolution);
-                }
-            }
+            //    // iterate through all noises
+            //    for (int i = 0; i < noises.Count; i++)
+            //    {
+            //        if (noises[i] != null) continue;
+            //        if (noises[i] == this)
+            //        {
+            //            noises.Remove(noises[i]);
+            //            Debug.Log("Cannot add this noise adder to itself");
+            //            i--;
+            //            continue;
+            //        }
+            //        noises[i].resolution = resolution;
+            //        RenderTexture rt = noises[i].CalculateNoise(noises[i].offset + offset / noises[i].scale, noises[i].scale * scale, resolution);
+            //        result = AddNoise(rt, result, resolution);
+            //    }
+            //}
 
-            return result;
+            //return result;
+            return new double[0, 0];
         }
 
         /// <summary>
@@ -56,10 +56,11 @@ namespace cosmicpotato.noisetools.Runtime {
         /// <param name="input"></param>
         /// <param name="result"></param>
         /// <param name="resolution"></param>
-        private RenderTexture AddNoise(RenderTexture input, RenderTexture result, int resolution)
+        private RenderTexture AddNoise(ComputeBuffer input, RenderTexture result, int resolution)
         {
-            shaderSelect.noiseShader.SetTexture(shaderHandle, "Input", input);
+            shaderSelect.noiseShader.SetBuffer(shaderHandle, "Input", input);
             shaderSelect.noiseShader.SetTexture(shaderHandle, "Result", result);
+            shaderSelect.noiseShader.SetInt("resolution", resolution);
             uint kx, ky, kz;
             shaderSelect.noiseShader.GetKernelThreadGroupSizes(shaderHandle, out kx, out ky, out kz);
             shaderSelect.noiseShader.Dispatch(shaderHandle, (int)(resolution / kx) + 1, (int)(resolution / ky) + 1, 1);

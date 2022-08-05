@@ -12,12 +12,14 @@ namespace cosmicpotato.noisetools.Runtime {
         [Tooltip("Scale of the noise function")]
         public Vector2 scale = new Vector2(1, 1);    // scale of noise
 
+        protected static string previewKernel = "Preview2D";
+
         /// <param name="offset"></param>
         /// <param name="scale"></param>
         /// <param name="resolution"></param>
         /// <returns>Calculated noise texture</returns>
-        public abstract RenderTexture CalculateNoise(Vector2 offset, Vector2 scale, int resolution);
-        public override RenderTexture CalculateNoise()
+        public abstract double[,] CalculateNoise(Vector2 offset, Vector2 scale, int resolution);
+        public override double[,] CalculateNoise()
         {
             return CalculateNoise(offset, scale, resolution);
         }
@@ -27,7 +29,7 @@ namespace cosmicpotato.noisetools.Runtime {
             if (!Application.isPlaying)
             {
                 // look for the correct preview shader in all assets
-                previewShader = Resources.Load<ComputeShader>("Shaders/Filters/Scale2D");
+                previewShader = Resources.Load<ComputeShader>("Shaders/Filters/" + previewKernel);
             }
         }
 
@@ -39,12 +41,20 @@ namespace cosmicpotato.noisetools.Runtime {
         {
             // save active RenderTexture
             RenderTexture oldrt = RenderTexture.active;
-            RenderTexture.active = CalculateNoise();
+            //RenderTexture.active = CalculateNoise();
 
             // Read from pixels
             Texture2D noiseTexture = new Texture2D(resolution, resolution, TextureFormat.ARGB32, false);
-            noiseTexture.ReadPixels(new Rect(0, 0, resolution, resolution), 0, 0);
-            noiseTexture.Apply();
+            //noiseTexture.ReadPixels(new Rect(0, 0, resolution, resolution), 0, 0);
+            //noiseTexture.Apply();
+            double[,] noise = CalculateNoise(offset, scale, resolution);
+            for (int i = 0; i < resolution; i++)
+            {
+                for (int j = 0; j < resolution; j++)
+                {
+                    noiseTexture.SetPixel(i, j, new Color((float)noise[i + j * resolution, 0], 0, 0));
+                }
+            }
 
             // re-activate old render texture
             RenderTexture.active = oldrt;
@@ -75,16 +85,20 @@ namespace cosmicpotato.noisetools.Runtime {
             if (!previewRT)
                 CreatePreviewRT();
 
-            if (previewShader && previewShader.HasKernel("Scale2D"))
+            if (previewShader && previewShader.HasKernel(previewKernel))
             {
-                RenderTexture rt = CalculateNoise();
-                previewHandle = previewShader.FindKernel("Scale2D");
-                previewShader.SetTexture(previewHandle, "Input", rt);
+                double[,] noise = CalculateNoise();
+                ComputeBuffer cb = new ComputeBuffer(noise.GetLength(0), sizeof(double) * 2);
+                cb.SetData(noise);
+
+                previewHandle = previewShader.FindKernel(previewKernel);
+                previewShader.SetBuffer(previewHandle, "Input", cb);
                 previewShader.SetTexture(previewHandle, "Result", previewRT);
+                previewShader.SetInt("resolution", resolution);
                 uint kx = 0, ky = 0, kz = 0;
                 previewShader.GetKernelThreadGroupSizes(previewHandle, out kx, out ky, out kz);
                 previewShader.Dispatch(previewHandle, (int)(previewRes / kx) + 1, (int)(previewRes / ky) + 1, 1);
-                rt.Release();
+                cb.Release();
             }
             else if (!previewShader)
                 Debug.LogError("Preview shader not found");
