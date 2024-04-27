@@ -1,5 +1,5 @@
 # Noise-Tools
-A unity package for editing procedural textures, with options to use either pre-made or custom shaders.
+This Package was designed with inspiration from Sebastian Lague. I used compute shaders to experiment with rendering simplex and perlin noise in 2D. The noise is generated with both hash tables and pseudorandom functions. I also designed a modular UI to manipulate and add different noise types together in realtime. Finally, I implemented the marching cube algorithm to make meshes out of textures.
 
 ## Install instructions
 
